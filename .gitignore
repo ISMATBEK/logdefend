@@ -1,18 +1,35 @@
-# Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
+import time
+import os
 
-# Other files and folders
-.settings/
+def monitor_log(file_path, keyword=None):
+    print(f"\n📁 Monitoring: {file_path}")
+    print(f"🔍 Keyword filter: {keyword if keyword else 'None'}")
+    
+    try:
+        with open(file_path, "r") as f:
+            f.seek(0, os.SEEK_END)  # Move to the end of file
 
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
+            while True:
+                line = f.readline()
+                if not line:
+                    time.sleep(0.5)
+                    continue
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+                if keyword:
+                    if keyword.lower() in line.lower():
+                        print(f"⚠️ {line.strip()}")
+                else:
+                    print(f"{line.strip()}")
+    except FileNotFoundError:
+        print("❌ Log file not found.")
+    except KeyboardInterrupt:
+        print("\n🛑 Monitoring stopped.")
+    except Exception as e:
+        print(f"⚠️ Error: {e}")
+
+if __name__ == "__main__":
+    print("📊 logdefend — Real-time Log Monitoring Tool")
+    path = input("📄 Enter log file path: ")
+    keyword = input("🔎 Enter keyword to filter (leave blank for all): ")
+    monitor_log(path, keyword if keyword.strip() != "" else None)
+
